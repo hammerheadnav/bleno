@@ -4,8 +4,6 @@ var jsonfile = require('jsonfile');
 var bleno = require('../../..');
 var SensorCharacteristic = require('../sensor-characteristic.js');
 
-var file = "/tmp/powerSensorData-" + moment().unix() + ".json"
-
 var PowerFeatureCharacteristic = function(flags) {
     PowerFeatureCharacteristic.super_.call(this, {
         uuid: '2A65',
