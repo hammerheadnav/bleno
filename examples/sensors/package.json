@@ -1,0 +1,23 @@
+{
+  "name": "sensor-simulator",
+  "version": "0.1.0",
+  "description": "BLE (Bluetooth Low Energy) Sensor Simulator",
+  "main": "main.js",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "author": {
+    "name": "Hammerhead",
+    "url" : "https://github.com/hammerheadnav"
+  },
+  "dependencies": {
+    "bleno": ">0.1.4",
+    "moment": "latest",
+    "jsonfile": "latest",
+    "minimist": "latest"
+  }
+}
