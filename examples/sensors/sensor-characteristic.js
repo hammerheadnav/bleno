@@ -2,7 +2,6 @@ var util = require('util');
 var moment = require('moment');
 var bleno = require('../..');
 
-var file = "/tmp/powerSensorData-" +  moment().unix() + ".json"
 var BlenoCharacteristic = bleno.Characteristic;
 
 function SensorMeasurementCharacteristic(options) {

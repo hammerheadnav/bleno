@@ -4,7 +4,7 @@ var jsonfile = require('jsonfile');
 var bleno = require('../../..');
 var SensorCharacteristic = require('../sensor-characteristic.js');
 
-var timeStamp = moment().unix();
+var timeStamp = moment().unix().milliseconds();
 var speedFile = "/tmp/speedSensorData-" + timeStamp + ".json"
 var cadenceFile = "/tmp/cadenceSensorData-" + timeStamp + ".json"
 var startTime = 1;
@@ -42,7 +42,6 @@ CSCMeasurementCharacteristic.prototype.valueGenerator = function() {
             var cadenceTime = startTime * 1024.0;
             writeCadenceData(data, cumulativeRevs, cadenceTime, offset);
         }
-        var timestamp = moment().unix();
         this._updateValueCallback(data);
         startTime += 1;
         if (startTime > 31) {
@@ -52,7 +51,7 @@ CSCMeasurementCharacteristic.prototype.valueGenerator = function() {
 };
 
 function writeSpeedData(data, cumulativeRevs, eventTime, offset) {
-    var timestamp = moment().unix();
+    var timestamp = moment().unix().milliseconds();
     data.writeUInt32LE(cumulativeRevs, offset);
     data.writeUInt16LE(eventTime, offset+4);
     var speedObj = {
@@ -72,7 +71,7 @@ function writeSpeedData(data, cumulativeRevs, eventTime, offset) {
 }
 
 function writeCadenceData(data, cumulativeRevs, eventTime, offset) {
-    var timestamp = moment().unix();
+    var timestamp = moment().unix().milliseconds();
     data.writeUInt16LE(cumulativeRevs, offset);
     data.writeUInt16LE(eventTime, offset+2);
     var cadenceObj = {

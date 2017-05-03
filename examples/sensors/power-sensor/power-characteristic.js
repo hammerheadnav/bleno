@@ -3,7 +3,7 @@ var moment = require('moment');
 var jsonfile = require('jsonfile');
 var bleno = require('../../..');
 var SensorCharacteristic = require('../sensor-characteristic.js');
-var timeStamp = moment().unix()
+var timeStamp = moment().unix().milliseconds();
 var powerFile = "/tmp/powerSensorData-" + timeStamp + ".json"
 var speedFile = "/tmp/powerSpeedSensorData-" + timeStamp + ".json"
 var cadenceFile = "/tmp/powerCadenceSensorData-" + timeStamp + ".json"
@@ -44,7 +44,7 @@ PowerMeasurementCharacteristic.prototype.valueGenerator = function() {
             var cadenceTime = startTime * 1024.0;
             writeCadenceData(data, cumulativeRevs, cadenceTime, offset);
         }
-        var timestamp = moment().unix();
+        var timestamp = moment().unix().milliseconds();
         this._updateValueCallback(data);
         var powerObj = {
             value: simulatedPower,
@@ -65,7 +65,7 @@ PowerMeasurementCharacteristic.prototype.valueGenerator = function() {
 };
 
 function writeSpeedData(data, cumulativeRevs, eventTime, offset) {
-    var timestamp = moment().unix();
+    var timestamp = moment().unix().milliseconds();
     data.writeUInt32LE(cumulativeRevs, offset);
     data.writeUInt16LE(eventTime, offset+4);
     var speedObj = {
@@ -85,7 +85,7 @@ function writeSpeedData(data, cumulativeRevs, eventTime, offset) {
 }
 
 function writeCadenceData(data, cumulativeRevs, eventTime, offset) {
-    var timestamp = moment().unix();
+    var timestamp = moment().unix().milliseconds();
     data.writeUInt16LE(cumulativeRevs, offset);
     data.writeUInt16LE(eventTime, offset+2);
     var cadenceObj = {

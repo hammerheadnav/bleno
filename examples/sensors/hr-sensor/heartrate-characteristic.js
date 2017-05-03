@@ -4,7 +4,7 @@ var jsonfile = require('jsonfile');
 var bleno = require('../../..');
 var SensorCharacteristic = require('../sensor-characteristic.js');
 
-var file = "/tmp/hrSensorData-" + moment().unix() + ".json"
+var file = "/tmp/hrSensorData-" + moment().unix().milliseconds() + ".json"
 
 var HeartRateMeasurementCharacteristic = function() {
     HeartRateMeasurementCharacteristic.super_.call(this, {
@@ -22,7 +22,7 @@ HeartRateMeasurementCharacteristic.prototype.valueGenerator = function() {
         data[0] = 0x00;
         var simulatedHR = Math.floor(Math.random() * (200 - 50)) + 50;
         data.writeUInt8(simulatedHR, 1);
-        var timestamp = moment().unix();
+        var timestamp = moment().unix().milliseconds();
         this._updateValueCallback(data);
         var hrObj = {
             value: simulatedHR,
