@@ -1,12 +1,24 @@
 var util = require('util');
 var moment = require('moment');
-var jsonfile = require('jsonfile');
+var csv = require('fast-csv');
+var fs = require('fs');
 var bleno = require('../../..');
 var SensorCharacteristic = require('../sensor-characteristic.js');
 
-var timeStamp = moment().unix().milliseconds();
-var speedFile = "/tmp/speedSensorData-" + timeStamp + ".json"
-var cadenceFile = "/tmp/cadenceSensorData-" + timeStamp + ".json"
+var timeStamp = moment().valueOf();
+var speedFile = "/tmp/speedSensorData-" + timeStamp + ".csv"
+var cadenceFile = "/tmp/cadenceSensorData-" + timeStamp + ".csv"
+var csvSpeedStream = csv.createWriteStream({
+        headers: true
+    }),
+    writableSpeedStream = fs.createWriteStream(speedFile);
+csvSpeedStream.pipe(writableSpeedStream);
+
+var csvCadStream = csv.createWriteStream({
+        headers: true
+    }),
+    writableCadStream = fs.createWriteStream(cadenceFile);
+csvCadStream.pipe(writableCadStream);
 var startTime = 1;
 var cumulativeRevs = 1;
 var CSCMeasurementCharacteristic = function(flags) {
@@ -51,9 +63,9 @@ CSCMeasurementCharacteristic.prototype.valueGenerator = function() {
 };
 
 function writeSpeedData(data, cumulativeRevs, eventTime, offset) {
-    var timestamp = moment().unix().milliseconds();
+    var timestamp = moment().valueOf();
     data.writeUInt32LE(cumulativeRevs, offset);
-    data.writeUInt16LE(eventTime, offset+4);
+    data.writeUInt16LE(eventTime, offset + 4);
     var speedObj = {
         value: {
             cumulativeRevs: cumulativeRevs,
@@ -61,19 +73,13 @@ function writeSpeedData(data, cumulativeRevs, eventTime, offset) {
         },
         timestamp: timestamp
     };
-    jsonfile.writeFile(speedFile, speedObj, {
-        flag: 'a'
-    }, function(err) {
-        if (err != null) {
-            console.error(err)
-        }
-    });
+    csvSpeedStream.write(speedObj);
 }
 
 function writeCadenceData(data, cumulativeRevs, eventTime, offset) {
-    var timestamp = moment().unix().milliseconds();
+    var timestamp = moment().valueOf();
     data.writeUInt16LE(cumulativeRevs, offset);
-    data.writeUInt16LE(eventTime, offset+2);
+    data.writeUInt16LE(eventTime, offset + 2);
     var cadenceObj = {
         value: {
             cumulativeRevs: cumulativeRevs,
@@ -81,13 +87,7 @@ function writeCadenceData(data, cumulativeRevs, eventTime, offset) {
         },
         timestamp: timestamp
     };
-    jsonfile.writeFile(cadenceFile, cadenceObj, {
-        flag: 'a'
-    }, function(err) {
-        if (err != null) {
-            console.error(err)
-        }
-    });
+    csvCadStream.write(cadenceObj);
 }
 
 module.exports = CSCMeasurementCharacteristic;

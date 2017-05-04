@@ -18,6 +18,7 @@
     "bleno": ">0.1.4",
     "moment": "latest",
     "jsonfile": "latest",
-    "minimist": "latest"
+    "minimist": "latest",
+    "fast-csv": "latest"
   }
 }

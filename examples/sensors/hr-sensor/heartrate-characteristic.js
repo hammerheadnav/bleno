@@ -1,11 +1,17 @@
 var util = require('util');
 var moment = require('moment');
-var jsonfile = require('jsonfile');
+var csv = require('fast-csv');
 var bleno = require('../../..');
+var fs = require('fs');
 var SensorCharacteristic = require('../sensor-characteristic.js');
 
-var file = "/tmp/hrSensorData-" + moment().unix().milliseconds() + ".json"
+var file = "/tmp/hrSensorData-" + moment().valueOf() + ".csv"
+var csvStream = csv.createWriteStream({
+        headers: true
+    }),
+    writableStream = fs.createWriteStream(file);
 
+csvStream.pipe(writableStream);
 var HeartRateMeasurementCharacteristic = function() {
     HeartRateMeasurementCharacteristic.super_.call(this, {
         uuid: '2A37',
@@ -22,19 +28,13 @@ HeartRateMeasurementCharacteristic.prototype.valueGenerator = function() {
         data[0] = 0x00;
         var simulatedHR = Math.floor(Math.random() * (200 - 50)) + 50;
         data.writeUInt8(simulatedHR, 1);
-        var timestamp = moment().unix().milliseconds();
+        var timestamp = moment().valueOf();
         this._updateValueCallback(data);
         var hrObj = {
             value: simulatedHR,
             timestamp: timestamp
         }
-        jsonfile.writeFile(file, hrObj, {
-            flag: 'a'
-        }, function(err) {
-            if (err != null) {
-                console.error(err)
-            }
-        })
+        csvStream.write(hrObj)
     }
 }
 
