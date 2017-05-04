@@ -6,8 +6,9 @@ var bleno = require('../../..');
 var SensorCharacteristic = require('../sensor-characteristic.js');
 
 var timeStamp = moment().valueOf();
-var speedFile = "/tmp/speedSensorData-" + timeStamp + ".csv"
-var cadenceFile = "/tmp/cadenceSensorData-" + timeStamp + ".csv"
+var speedFile = "/tmp/speedSensorData-" + timeStamp + ".csv";
+var cadenceFile = "/tmp/cadenceSensorData-" + timeStamp + ".csv";
+
 var csvSpeedStream = csv.createWriteStream({
         headers: true
     }),
@@ -67,10 +68,8 @@ function writeSpeedData(data, cumulativeRevs, eventTime, offset) {
     data.writeUInt32LE(cumulativeRevs, offset);
     data.writeUInt16LE(eventTime, offset + 4);
     var speedObj = {
-        value: {
-            cumulativeRevs: cumulativeRevs,
-            eventTime: eventTime
-        },
+        cumulativeRevs: cumulativeRevs,
+        eventTime: eventTime,
         timestamp: timestamp
     };
     csvSpeedStream.write(speedObj);
@@ -81,10 +80,8 @@ function writeCadenceData(data, cumulativeRevs, eventTime, offset) {
     data.writeUInt16LE(cumulativeRevs, offset);
     data.writeUInt16LE(eventTime, offset + 2);
     var cadenceObj = {
-        value: {
-            cumulativeRevs: cumulativeRevs,
-            eventTime: eventTime
-        },
+        cumulativeRevs: cumulativeRevs,
+        eventTime: eventTime,
         timestamp: timestamp
     };
     csvCadStream.write(cadenceObj);

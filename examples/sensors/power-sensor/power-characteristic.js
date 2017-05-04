@@ -5,9 +5,27 @@ var fs = require('fs');
 var bleno = require('../../..');
 var SensorCharacteristic = require('../sensor-characteristic.js');
 var timeStamp = moment().valueOf();
-var powerFile = "/tmp/powerSensorData-" + timeStamp + ".json"
-var speedFile = "/tmp/powerSpeedSensorData-" + timeStamp + ".json"
-var cadenceFile = "/tmp/powerCadenceSensorData-" + timeStamp + ".json"
+var powerFile = "/tmp/powerSensorData-" + timeStamp + ".csv"
+var speedFile = "/tmp/powerSpeedSensorData-" + timeStamp + ".csv"
+var cadenceFile = "/tmp/powerCadenceSensorData-" + timeStamp + ".csv"
+
+var csvPowerStream = csv.createWriteStream({
+        headers: true
+    }),
+    writablePowerStream = fs.createWriteStream(powerFile);
+csvPowerStream.pipe(writablePowerStream);
+
+var csvSpeedStream = csv.createWriteStream({
+        headers: true
+    }),
+    writableSpeedStream = fs.createWriteStream(speedFile);
+csvSpeedStream.pipe(writableSpeedStream);
+
+var csvCadStream = csv.createWriteStream({
+        headers: true
+    }),
+    writableCadStream = fs.createWriteStream(cadenceFile);
+csvCadStream.pipe(writableCadStream);
 var startTime = 1;
 var cumulativeRevs = 1;
 var PowerMeasurementCharacteristic = function(flags) {
@@ -64,13 +82,7 @@ function writePowerData(data) {
         value: simulatedPower,
         timestamp: timestamp
     }
-    jsonfile.writeFile(powerFile, powerObj, {
-        flag: 'a'
-    }, function(err) {
-        if (err != null) {
-            console.error(err)
-        }
-    })
+    csvPowerStream.write(powerObj);
 }
 
 function writeSpeedData(data, cumulativeRevs, eventTime, offset) {
@@ -78,19 +90,11 @@ function writeSpeedData(data, cumulativeRevs, eventTime, offset) {
     data.writeUInt32LE(cumulativeRevs, offset);
     data.writeUInt16LE(eventTime, offset + 4);
     var speedObj = {
-        value: {
-            cumulativeRevs: cumulativeRevs,
-            eventTime: eventTime
-        },
+        cumulativeRevs: cumulativeRevs,
+        eventTime: eventTime,
         timestamp: timestamp
     };
-    jsonfile.writeFile(speedFile, speedObj, {
-        flag: 'a'
-    }, function(err) {
-        if (err != null) {
-            console.error(err)
-        }
-    });
+    csvSpeedStream.write(speedObj);
 }
 
 function writeCadenceData(data, cumulativeRevs, eventTime, offset) {
@@ -98,19 +102,11 @@ function writeCadenceData(data, cumulativeRevs, eventTime, offset) {
     data.writeUInt16LE(cumulativeRevs, offset);
     data.writeUInt16LE(eventTime, offset + 2);
     var cadenceObj = {
-        value: {
-            cumulativeRevs: cumulativeRevs,
-            eventTime: eventTime
-        },
+        cumulativeRevs: cumulativeRevs,
+        eventTime: eventTime,
         timestamp: timestamp
     };
-    jsonfile.writeFile(cadenceFile, cadenceObj, {
-        flag: 'a'
-    }, function(err) {
-        if (err != null) {
-            console.error(err)
-        }
-    });
+    csvCadStream.write(cadenceObj);
 }
 
 module.exports = PowerMeasurementCharacteristic;
