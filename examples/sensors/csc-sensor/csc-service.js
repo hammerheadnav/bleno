@@ -6,6 +6,10 @@ var CSCFeatureCharacteristic = require('./csc-feature-characteristic.js')
 
 function CSCSensorService(args) {
     var flags = (args && args != true) ? args.split(",") : [];
+    if(flags.length == 0) {
+      console.log("Please specify CSC types to support. Ex: node main.js --csc=speed,cadece");
+      process.exit(0);
+    }
     console.log("Starting CSC Sensor Simulator with " + args)
     bleno.PrimaryService.call(this, {
         uuid: '1816',
